@@ -123,8 +123,6 @@ set tm=500
 " Enable syntax highlighting
 syntax enable
 
-colorscheme desert
-set background=dark
 
 " Set extra options when running in GUI mode
 if has("gui_running")
@@ -138,19 +136,6 @@ endif
 set ffs=unix,dos,mac
 
 set guifont=Monaco:h12
-
-" 设置编码
-set encoding=utf-8
-"set fenc=utf-8
-set fencs=utf-8,gbk
-"set fileencodings=ucs-bom,utf-8,cp936,gb2312,gb18030,big5
-set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
-
-"设置默认打开窗口大小  
-set lines=70 columns=200  
-
-"设置窗口透明度  
-set transparency=10  
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo

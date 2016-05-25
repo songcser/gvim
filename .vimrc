@@ -30,6 +30,9 @@ set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
    
 "显示行号  
 set number  
+" 高亮显示当前行/列
+set cursorline
+"set cursorcolumn
   
 "设置默认打开窗口大小  
 set lines=70 columns=220  
@@ -38,11 +41,13 @@ set lines=70 columns=220
 set transparency=10  
   
 "设置背景色  
-"set bg=dark  
+set bg=dark  
   
 "用 koehler 调色板  
-"colorscheme molokai  
-  
+colorscheme molokai  
+"colorscheme desert
+"set background=dark
+
 "隐藏工具栏和滑动条  
 set guioptions=aAce      
             
@@ -206,7 +211,8 @@ Bundle 'ctags.vim'
 Bundle 'taglist.vim'  
 Bundle 'winmanager'  
 Bundle 'Command-T'  
-"Bundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+"Bundle 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
+Bundle 'Lokaltog/vim-powerline'
 Bundle 'tpope/vim-fugitive'
 Bundle 'AutoClose'
 Bundle 'ZenCoding.vim'
@@ -214,11 +220,13 @@ Bundle '_jsbeautify'
 Bundle 'EasyMotion'
 Bundle 'FencView.vim'
 Bundle 'UltiSnips'
-"Bundle 'Valloric/YouCompleteMe'
+Bundle 'Valloric/YouCompleteMe'
 Bundle 'klen/python-mode'
 Bundle 'davidhalter/jedi-vim'
 Bundle 'scrooloose/nerdcommenter'
 Bundle 'ihacklog/AuthorInfo'
+Bundle 'dyng/ctrlsf.vim'
+Bundle 'fortyMiles/LineChanger'
   
 " non github repos  
 "Bundle 'git://git.wincent.com/command-t.git'  
@@ -227,7 +235,22 @@ Bundle 'https://github.com/scrooloose/nerdtree.git'
 Bundle 'Xuyuanp/nerdtree-git-plugin'
 Bundle 'othree/xml.vim'
 Bundle 'ianva/vim-youdao-translater'
+Bundle 'Mizuchi/STL-Syntax'
+Bundle 'suan/vim-instant-markdown'
+Bundle 'nathanaelkane/vim-indent-guides'
+Bundle 'scrooloose/syntastic'
    
+Bundle 'vim-scripts/a.vim'
+Bundle 'kshenoy/vim-signature'
+
+Bundle 'majutsushi/tagbar'
+
+Bundle 'dgryski/vim-godef'
+Bundle 'Blackrush/vim-gocode'
+Bundle 'nsf/gocode', {'rtp': 'vim/'}
+Plugin 'fatih/vim-go'
+
+
 filetype plugin indent on     " required!  
 "  
 " Brief help  
@@ -244,14 +267,14 @@ filetype plugin indent on     " required!
 ""-----------------------"NERDTreesetting" --------------------------------""
 map <F2> :NERDTreeToggle<CR>
 let g:NERDTreeIndicatorMapCustom = {
-    \ "Modified"  : "✹",
-    \ "Staged"    : "✚",
-    \ "Untracked" : "✭",
-    \ "Renamed"   : "➜",
-    \ "Unmerged"  : "═",
-    \ "Deleted"   : "✖",
-    \ "Dirty"     : "✗",
-    \ "Clean"     : "✔︎",
+    \ "Modified"  : "*",
+    \ "Staged"    : "+",
+    \ "Untracked" : "~",
+    \ "Renamed"   : ">",
+    \ "Unmerged"  : "-",
+    \ "Deleted"   : "x",
+    \ "Dirty"     : "!",
+    \ "Clean"     : "0",
     \ "Unknown"   : "?"
     \ }
 
@@ -346,9 +369,9 @@ augroup vimrc_autocmds
     autocmd FileType python set nowrap
 augroup END
 
-"--------------------------------------------------------------------------------------"
+"================================================================================"
 ""===>edit .vimrc  auto open new tab
-"--------------------------------------------------------------------------------------"
+
 function! MySys()
   if has("win32")
     return "windows"
@@ -407,30 +430,178 @@ if MySys() == 'windows'
     source $VIMRUNTIME/mswin.vim
     behave mswin
 endif 
-
 "--------------------------------------------------------------------------------"
+
+"================================================================================"
 ""====> AuthorInfo setting
 
 let g:vimrc_author='jysong'
 let g:vimrc_email='jiyi@soundlifegroup.com'
-let g:vimrc_homepage='http://www.soundlifegroup.cn'
+let g:vimrc_homepage='http://www.soundlifegroup.com'
 
 nmap <F4> :AuthorInfoDetect<cr>
 "--------------------------------------------------------------------------------"
-"--------------------------------------------------------------------------------"
+
+
+"================================================================================"
 ""====> ConqueTerm setting
 
 map <F10> :ConqueTermSplit bash<cr>
 
 let g:ConqueTerm_Color = 2
-let g:ConqueTerm_InsertOnEnter = 1
+let g:ConqueTerm_InsertOnEnter = 0
 "--------------------------------------------------------------------------------"
 
 
-"--------------------------------------------------------------------------------"
+"================================================================================"
 ""====>vim-youdao-translater
 
 vnoremap <silent> <C-T> <Esc>:Ydv<CR>
 nnoremap <silent> <C-T> <Esc>:Ydc<CR>
 noremap <leader>yd :Yde<CR>
 "--------------------------------------------------------------------------------"
+
+
+"================================================================================"
+"=====>Powerline"
+
+let g:Powerline_colorscheme='solarized256'
+"--------------------------------------------------------------------------------"
+
+"================================================================================"
+"=====> vim-indent-guides"
+" 随 vim 自启动
+let g:indent_guides_enable_on_vim_startup=1
+" 从第二层开始可视化显示缩进
+let g:indent_guides_start_level=2
+" 色块宽度
+let g:indent_guides_guide_size=1
+" 快捷键 i 开/关缩进可视化
+nmap <silent> <Leader>i <Plug>IndentGuidesToggle
+
+"================================================================================"
+"======> "
+
+" 设置显示／隐藏标签列表子窗口的快捷键。速记：tag list 
+nnoremap <F9> :TagbarToggle<CR> 
+" 设置标签子窗口的宽度 
+let tagbar_width=32
+" tagbar 子窗口中不显示冗余帮助信息 
+let g:tagbar_compact=1
+" 设置 ctags 对哪些代码元素生成标签
+let g:tagbar_type_cpp = {
+    \ 'kinds' : [
+        \ 'd:macros:1',
+        \ 'g:enums',
+        \ 't:typedefs:0:0',
+        \ 'e:enumerators:0:0',
+        \ 'n:namespaces',
+        \ 'c:classes',
+        \ 's:structs',
+        \ 'u:unions',
+        \ 'f:functions',
+        \ 'm:members:0:0',
+        \ 'v:global:0:0',
+        \ 'x:external:0:0',
+        \ 'l:local:0:0'
+     \ ],
+     \ 'sro'        : '::',
+     \ 'kind2scope' : {
+         \ 'g' : 'enum',
+         \ 'n' : 'namespace',
+         \ 'c' : 'class',
+         \ 's' : 'struct',
+         \ 'u' : 'union'
+     \ },
+     \ 'scope2kind' : {
+         \ 'enum'      : 'g',
+         \ 'namespace' : 'n',
+         \ 'class'     : 'c',
+         \ 'struct'    : 's',
+         \ 'union'     : 'u'
+     \ }
+\ }
+
+let g:tagbar_type_go = {
+    \ 'ctagstype' : 'go',
+    \ 'kinds'     : [
+        \ 'p:package',
+        \ 'i:imports:1',
+        \ 'c:constants',
+        \ 'v:variables',
+        \ 't:types',
+        \ 'n:interfaces',
+        \ 'w:fields',
+        \ 'e:embedded',
+        \ 'm:methods',
+        \ 'r:constructor',
+        \ 'f:functions'
+    \ ],
+    \ 'sro' : '.',
+    \ 'kind2scope' : {
+        \ 't' : 'ctype',
+        \ 'n' : 'ntype'
+    \ },
+    \ 'scope2kind' : {
+        \ 'ctype' : 't',
+        \ 'ntype' : 'n'
+    \ },
+    \ 'ctagsbin'  : 'gotags',
+    \ 'ctagsargs' : '-sort -silent'
+\ }
+
+
+"--------------------------------------------------------------------------------"
+"======> go setting
+autocmd BufWritePre *.go :Fmt
+
+"Run commands such as go run for the current file with <leader>r or go build and go test for the current package with <leader>b and <leader>t respectively.
+"Display beautifully annotated source code to see which functions are covered with <leader>c.
+au FileType go nmap <leader>r <Plug>(go-run)
+au FileType go nmap <leader>b <Plug>(go-build)
+au FileType go nmap <leader>t <Plug>(go-test)
+au FileType go nmap <leader>c <Plug>(go-coverage)
+
+au FileType go nmap <Leader>ds <Plug>(go-def-split)
+au FileType go nmap <Leader>dv <Plug>(go-def-vertical)
+au FileType go nmap <Leader>dt <Plug>(go-def-tab)
+
+au FileType go nmap <Leader>gd <Plug>(go-doc)
+au FileType go nmap <Leader>gv <Plug>(go-doc-vertical)
+
+au FileType go nmap <Leader>i <Plug>(go-info)
+
+au FileType go nmap <Leader>s <Plug>(go-implements)
+
+au FileType go nmap <Leader>e <Plug>(go-rename)
+
+"By default syntax-highlighting for Functions, Methods and Structs is disabled. To change it:"
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_interfaces = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+
+"Enable goimports to automatically insert import paths instead of gofmt:"
+let g:go_fmt_command = "goimports"
+
+"By default vim-go shows errors for the fmt command, to disable it:"
+let g:go_fmt_fail_silently = 1
+
+
+"--------------------------------------------------------------------------------"
+"======> syntastic setting
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:ycm_show_diagnostics_ui = 0
+let g:syntastic_python_checkers = ['pylint']
+"let g:syntastic_mode_map = {
+"    \ "mode": "active",
+"    \ "passive_filetypes": ["python"] }
